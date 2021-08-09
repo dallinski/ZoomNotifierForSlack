@@ -1,7 +1,5 @@
 const axios = require('axios')
 
-const slackEndpointForIncomingWebhooks = '{your_slack_webhook_endpoint_goes_here}';
-
 exports.handler = async (event) => {
     try {
         const eventBody = JSON.parse(event.body);
@@ -43,7 +41,7 @@ exports.handler = async (event) => {
         };
 
         const res = await axios.post(
-            slackEndpointForIncomingWebhooks,
+            process.env.slackEndpointForIncomingWebhooks,
             JSON.stringify(slackBlockMessage),
             {
                 headers: {

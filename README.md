@@ -38,37 +38,46 @@ In order for the lambda function to know where to sent webhook events, the Slack
 - You will now have a webhook URL (or multiple if you created multiple). You will use this in the setup of your AWS lambda function.
 
 ### AWS Lambda function
-- In `index.js`, replace the value of `slackEndpointForIncomingWebhooks` with the webhook URL from your Slack app.
-    - If you configured multiple webhook endpoints in your Slack app, you will need to modify the lambda function logic in `index.js`. I'm going to assume that you know what you're doing. If not, you should probably just stick to one webhook endpoint.
-- If you don't have `npm` installed on your machine, install it.
-- In the root directory of this repository, run `npm install`. It will install any dependencies declared in `package.json`.
-    - For now, the only dependency is axios, but that could change in the future if this lambda function is beefed up.
-    - You will notice that you now have a `node_modules` directory, which should contain an `axios` directory.
-- Create a zip file that contains `index.js` and the `node_modules` directory.
-- In a browser, go to https://aws.amazon.com/
-- If you don't already have an account, create one
-- Sign in
-- In the "AWS services" section of your dashboard, click on "Lambda". You may need to expand all services to find it. (It is in the "Compute" section of all services.)
-- Click "Create function"
-- Select "Author from scratch"
-- Name your function (I named mine "zoomSlackNotifier")
-- Choose "Node.js" as your runtime
-- Click "Create function"
-- You will be taken to the function page for your newly created function
-- Click the "Upload from" dropdown on the right side (about middle of the page down)
-- Select ".zip file"
-- Choose the zip file that you created earlier (containing `index.js` and the `node_modules` directory)
-- You should now see the function inside the "Code source" editor
-- In the "Function overview" section at the top of the page, click "+ Add trigger"
-- In the dropdown, select "API Gateway"
-- Select "Create an API"
-- Select "REST API" for the API type
-- Select "Open" for the Security
-    - **This is a security vulnerability! If you are not comfortable having this vulnerability, choose "Create JWT authorizer". I will not go over how to set that up.**
-- Click "Add"
-- You are taken back to the function page, with the "Triggers" section open
-- Expand the details for your API Gateway and note the API endpoint. You will use this in the setup of your Zoom app.
-    - It will be similar to `https://abcdefgh.execute-api.us-west-2.amazonaws.com/default/yourLambdaFunctionName`
+- Install dependencies and prepare the zip file
+  - If you don't have `npm` installed on your machine, install it.
+  - In the root directory of this repository, run `npm install`. It will install any dependencies declared in `package.json`.
+      - For now, the only dependency is axios, but that could change in the future if this lambda function is beefed up.
+      - You will notice that you now have a `node_modules` directory, which should contain an `axios` directory.
+  - Create a zip file that contains `index.js` and the `node_modules` directory.
+- Create the lambda function
+  - In a browser, go to https://aws.amazon.com/
+  - If you don't already have an account, create one
+  - Sign in
+  - In the "AWS services" section of your dashboard, click on "Lambda". You may need to expand all services to find it. (It is in the "Compute" section of all services.)
+  - Click "Create function"
+  - Select "Author from scratch"
+  - Name your function (I named mine "zoomSlackNotifier")
+  - Choose "Node.js" as your runtime
+  - Click "Create function"
+  - You will be taken to the function page for your newly created function
+  - Click the "Upload from" dropdown on the right side (about middle of the page down)
+  - Select ".zip file"
+  - Choose the zip file that you created earlier (containing `index.js` and the `node_modules` directory)
+  - You should now see the function inside the "Code source" editor
+- Set the needed environment variable
+  - Click on the "Configuration" button (near the middle of the screen)
+  - Click on "Environment variables" on the left side
+    - Click "Edit"
+    - Click "Add environment variable"
+    - Input `slackEndpointForIncomingWebhooks` for the key
+    - Input the webhook URL from your Slack app for the value
+    - Click "Save"
+- Configure the API gateway for your lambda function
+  - In the "Function overview" section at the top of the page, click "+ Add trigger"
+  - In the dropdown, select "API Gateway"
+  - Select "Create an API"
+  - Select "REST API" for the API type
+  - Select "Open" for the Security
+      - **This is a security vulnerability**
+  - Click "Add"
+  - You are taken back to the function page, with the "Triggers" section open
+  - Expand the details for your API Gateway and note the API endpoint. You will use this in the setup of your Zoom app.
+      - It will be similar to `https://abcdefgh.execute-api.us-west-2.amazonaws.com/default/yourLambdaFunctionName`
 
 ### Zoom App
 - In a browser, go to https://marketplace.zoom.us/
